@@ -1,0 +1,60 @@
+name: Registres open-ent (Nexus, repli GitHub Packages)
+description: >
+  Choisit d'où un build tire @open-ent/* (npm) et org.entcore (Maven) : rct-nexus en
+  premier, GitHub Packages en repli, ou l'inverse. Nexus ne dépend ni du quota ni de la
+  facturation GitHub, et c'est la source de la prod. Les deux registres servent les
+  mêmes tarballs npm, octet pour octet.
+
+inputs:
+  nexus-user:
+    description: Utilisateur Nexus (secret de DÉPÔT : un secret d'organisation est vide dans un dépôt privé sur l'offre Free).
+    required: true
+  nexus-password:
+    description: Mot de passe Nexus.
+    required: true
+  github-token:
+    description: Jeton de lecture de GitHub Packages (npm et Maven).
+    required: true
+  github-actor:
+    description: Utilisateur associé au jeton GitHub, pour Maven.
+    default: ${{ github.actor }}
+  prefer:
+    description: Source essayée en premier, nexus ou github.
+    default: nexus
+  npm-dir:
+    description: Dossier dont le .npmrc déclare @open-ent (vide pour ne pas toucher à npm).
+    default: frontend
+  maven-settings:
+    description: Écrire ~/.m2/settings.xml (true/false).
+    default: "true"
+  nexus-url:
+    description: Racine de Nexus.
+    default: https://rct-nexus.tech.fr
+  github-maven-url:
+    description: Dépôt Maven GitHub qui sert org.entcore.
+    default: https://maven.pkg.github.com/open-ent/entcore-v2
+
+outputs:
+  npm-source:
+    description: Registre retenu pour @open-ent (nexus ou github).
+    value: ${{ steps.select.outputs.npm }}
+  maven-order:
+    description: Ordre des dépôts Maven déclarés (ex. nexus,github).
+    value: ${{ steps.select.outputs.maven }}
+
+runs:
+  using: composite
+  steps:
+    - id: select
+      shell: bash
+      env:
+        NEXUS_USER: ${{ inputs.nexus-user }}
+        NEXUS_PASSWORD: ${{ inputs.nexus-password }}
+        GH_PKG_TOKEN: ${{ inputs.github-token }}
+        GH_PKG_ACTOR: ${{ inputs.github-actor }}
+        PREFER: ${{ inputs.prefer }}
+        NPM_DIR: ${{ inputs.npm-dir }}
+        MAVEN_SETTINGS: ${{ inputs.maven-settings }}
+        NEXUS_URL: ${{ inputs.nexus-url }}
+        GITHUB_MAVEN_URL: ${{ inputs.github-maven-url }}
+      run: bash "${{ github.action_path }}/select.sh"
