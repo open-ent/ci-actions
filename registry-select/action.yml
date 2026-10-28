@@ -7,39 +7,39 @@ description: >
 
 inputs:
   nexus-user:
-    description: Utilisateur Nexus (secret de DÉPÔT : un secret d'organisation est vide dans un dépôt privé sur l'offre Free).
+    description: "Utilisateur Nexus (secret de DÉPÔT : un secret d'organisation est vide dans un dépôt privé sur l'offre Free)."
     required: true
   nexus-password:
-    description: Mot de passe Nexus.
+    description: "Mot de passe Nexus."
     required: true
   github-token:
-    description: Jeton de lecture de GitHub Packages (npm et Maven).
+    description: "Jeton de lecture de GitHub Packages (npm et Maven)."
     required: true
   github-actor:
-    description: Utilisateur associé au jeton GitHub, pour Maven.
+    description: "Utilisateur associé au jeton GitHub, pour Maven."
     default: ${{ github.actor }}
   prefer:
-    description: Source essayée en premier, nexus ou github.
+    description: "Source essayée en premier, nexus ou github."
     default: nexus
   npm-dir:
-    description: Dossier dont le .npmrc déclare @open-ent (vide pour ne pas toucher à npm).
+    description: "Dossier dont le .npmrc déclare @open-ent (vide pour ne pas toucher à npm)."
     default: frontend
   maven-settings:
-    description: Écrire ~/.m2/settings.xml (true/false).
+    description: "Écrire ~/.m2/settings.xml (true/false)."
     default: "true"
   nexus-url:
-    description: Racine de Nexus.
+    description: "Racine de Nexus."
     default: https://rct-nexus.tech.fr
   github-maven-url:
-    description: Dépôt Maven GitHub qui sert org.entcore.
+    description: "Dépôt Maven GitHub qui sert org.entcore."
     default: https://maven.pkg.github.com/open-ent/entcore-v2
 
 outputs:
   npm-source:
-    description: Registre retenu pour @open-ent (nexus ou github).
+    description: "Registre retenu pour @open-ent (nexus ou github)."
     value: ${{ steps.select.outputs.npm }}
   maven-order:
-    description: Ordre des dépôts Maven déclarés (ex. nexus,github).
+    description: "Ordre des dépôts Maven déclarés (ex. nexus,github)."
     value: ${{ steps.select.outputs.maven }}
 
 runs:
